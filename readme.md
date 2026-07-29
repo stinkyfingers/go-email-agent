@@ -9,6 +9,19 @@
 
  `cmd/check_gmail/main.go` - for testing only - a single gmail run against the hardcoded email address.
 
+
+ ## Run Locally
+
+- assure you have an .env file with SLACK_WEBHOOK, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+   - you'll need a slack app with a webhook
+   - you'll need a Google Cloud account - John has a personal one established
+- Assure you have an agent file at agentfiles/<your_email>/AGENT.md, detailing to the LLM how to handle emails.
+
+`go run cmd/gmail_login/main.go`
+- visit localhost:8080/login and authorize a gmail address
+  - note: the address must be added to "allowed emails," which is currently in my personal Google Cloud account
+`go run cmd/check_emails/main.go`
+
  ## Project
 
  - agentfiles - this is the local directory for AGENT.md files per email. Only used for local testing.
@@ -21,26 +34,36 @@
  - tokenstorage - package for interface and implementations for retrieval of OAuth tokens.
  - user - package for user, essentially just an email & email type.
 
+
  ## TODO
 
- - finish Hexagon MCP tools - in Hexagon service
- - infrastructure, managed by Terraform
-    - Lambdas+API Gateway -or- ECS and EventBridge
-    - SSM Params for config values
-    - S3 for per-user AGENT.md files
-    - 2 tasks: gmail_login (http server), and check_gmail (cron task)
- - If not using Eventbridge, write command for cron-type task to run check_gmail-type call for all registered gmail accounts
- - Determine how to run 2 services: Procfile, multi-stage docker build, add all to main.go, etc.
- - swap hardcoded values for configurable values for, at least the following:
-    - GOOGLE_CLIENT_ID
-    - GOOGLE_CLIENT_SECRET
-    - HEXAGON_URL
-    - Port for http server, maybe
- - add customizable agentfilestorage and tokenstorage using AWS resources. Currently, these are hardcoded local file sources.
-   - implement `s3.go` in agentfilestorage
-   - implement `ssm.go` in tokenstorage
-
- - 2nd LLM for verification
- - Hex API security
- - Logging via 
- 
+ - in Hexagon codebase
+   - finish Hexagon MCP tools - in Hexagon service, branch HEX-310-mcp-server - copy remaining DB tools from Connor's original project.
+ - in this codebase
+   - infrastructure, managed by Terraform
+      - Lambdas+API Gateway -or- ECS and EventBridge (or other cron-style task)
+      - SSM Params for config values
+      - S3 for per-user AGENT.md files
+      - 2 tasks: gmail_login (http server), and check_gmail (cron task)
+         - Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
+   - replace hardcoded envvar values with configurable values for, at least the following:
+      - GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET
+      - HEXAGON_URL
+      - Port for http server, maybe
+   - add customizable agentfilestorage and tokenstorage using AWS resources. Currently, these are hardcoded local file sources in the various cmd/.../main.go packages.
+      - implement `s3.go` in agentfilestorage (or something similar)
+      - implement `ssm.go` in tokenstorage (or something similar)
+   - add 2nd LLM step for verification
+   - Sentry integration
+ - General items
+   - Hex API authentication?
+   - Set up "company" Google Cloud account and give team access.
+      - APIs & Services 
+         - enable Gmail API
+      - OAuth Consent Screen -> Clients 
+         - add a Web Client (save ClientID and Secret)
+         - add redirect URI (localhost:8080/callback and whatever host the go-email-agent winds up being)
+      - OAuth Consent Screen -> Audience
+         - add Test Users
+   - Move project to repo in ticketco-web github account
