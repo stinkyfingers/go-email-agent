@@ -76,6 +76,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// hex mcp server
+	hexagonMCPSession, err := mcp.HexagonMCPSession(ctx, hexagonUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer hexagonMCPSession.Close()
+
 	// run email agent for each user. Tally errors and log.
 	var userErrors []string
 	for _, user := range users {
@@ -85,10 +92,7 @@ func main() {
 		if err != nil {
 			userErrors = append(userErrors, fmt.Sprintf("connect error for user %s: %v", user.Email, err))
 		}
-		hexagonMCPSession, err := mcp.HexagonMCPSession(ctx, hexagonUrl)
-		if err != nil {
-			userErrors = append(userErrors, fmt.Sprintf("hexagon mcp session error for user %s: %v", user.Email, err))
-		}
+
 		// Run LLM
 		bedrock := llm.NewBedrock(awsRegion, mcpSession, hexagonMCPSession)
 		anthropic := llm.NewAnthropic(bedrock, user, anthropicModelID)

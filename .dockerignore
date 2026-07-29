@@ -1,0 +1,10 @@
+.git
+.gitignore
+terraform/
+bin/
+tokens/
+agentfiles/
+*.tfstate*
+.env
+credentials.json*
+token.json*

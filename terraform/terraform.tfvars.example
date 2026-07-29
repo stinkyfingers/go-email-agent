@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars (gitignored) and fill in. Never commit real
+# secret values — google_client_secret and slack_webhook are marked
+# sensitive and have no defaults on purpose.
+
+image_tag       = "REPLACE_ME"          # e.g. a git SHA, set per deploy
+domain_name     = "REPLACE_ME"          # e.g. gmail-auth.example.com — required, see variables.tf
+route53_zone_id = ""                    # set if domain_name's DNS is in this account's Route 53
+
+google_client_secret = "REPLACE_ME"
+slack_webhook         = ""              # optional — leave "" to disable Slack notifications
+
+# Only override these if you're not going with the defaults in variables.tf:
+# hexagon_url = "REPLACE_ME"            # localhost default will NOT work once deployed — see variables.tf

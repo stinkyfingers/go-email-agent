@@ -5,3 +5,12 @@ bin
 tokens/
 agentfiles/
 AGENT.md*
+
+# terraform
+terraform/**/.terraform/
+terraform/**/.terraform.lock.hcl
+terraform/**/*.tfstate
+terraform/**/*.tfstate.*
+terraform/**/*.tfvars
+!terraform/**/*.tfvars.example
+terraform/**/crash.log
