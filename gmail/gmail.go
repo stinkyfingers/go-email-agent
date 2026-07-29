@@ -33,19 +33,29 @@ type EmailSummary struct {
 	To      string `json:"to" jsonschema:"the recipient of the email"`
 }
 
-func NewGmail(tokenstorage tokenstorage.Storage) *Gmail {
+func NewGmail(tokenstorage tokenstorage.Storage) (*Gmail, error) {
 	clientID := os.Getenv("GOOGLE_CLIENT_ID")
+	if clientID == "" {
+		return nil, fmt.Errorf("GOOGLE_CLIENT_ID is empty")
+	}
 	clientSecret := os.Getenv("GOOGLE_CLIENT_SECRET")
+	if clientSecret == "" {
+		return nil, fmt.Errorf("GOOGLE_CLIENT_SECRET is empty")
+	}
+	googleOAuthRedirect := os.Getenv("GOOGLE_OAUTH_REDIRECT_URL")
+	if googleOAuthRedirect == "" {
+		return nil, fmt.Errorf("GOOGLE_OAUTH_REDIRECT_URL is empty")
+	}
 	return &Gmail{
 		TokenStorage: tokenstorage,
 		OAuthConfig: &oauth2.Config{
-			RedirectURL:  "http://localhost:8080/callback",
+			RedirectURL:  googleOAuthRedirect,
 			ClientID:     clientID,
 			ClientSecret: clientSecret,
 			Scopes:       []string{gmail.GmailReadonlyScope, gmail.GmailComposeScope, "email", "openid"},
 			Endpoint:     google.Endpoint,
 		},
-	}
+	}, nil
 }
 
 func (g *Gmail) RunOAuthServer(ctx context.Context) error {
@@ -145,7 +155,11 @@ func (g *Gmail) GmailService(ctx context.Context, email string) (*gmail.Service,
 }
 
 func CheckGmail(ctx context.Context, tokenStorage tokenstorage.Storage, email string) ([]EmailSummary, error) {
-	srv, err := NewGmail(tokenStorage).GmailService(ctx, email)
+	g, err := NewGmail(tokenStorage)
+	if err != nil {
+		return nil, err
+	}
+	srv, err := g.GmailService(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +210,12 @@ func CheckGmail(ctx context.Context, tokenStorage tokenstorage.Storage, email st
 }
 
 func DraftEmail(ctx context.Context, messageID, body string, tokenStorage tokenstorage.Storage, email string) (string, error) {
-	srv, err := NewGmail(tokenStorage).GmailService(ctx, email)
+	g, err := NewGmail(tokenStorage)
+	if err != nil {
+		return "", err
+	}
+
+	srv, err := g.GmailService(ctx, email)
 	if err != nil {
 		return "", err
 	}

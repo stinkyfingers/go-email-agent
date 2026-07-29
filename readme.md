@@ -46,14 +46,13 @@
       - S3 for per-user AGENT.md files
       - 2 tasks: gmail_login (http server), and check_gmail (cron task)
          - Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
-   - replace hardcoded envvar values with configurable values for, at least the following:
-      - GOOGLE_CLIENT_ID
-      - GOOGLE_CLIENT_SECRET
-      - HEXAGON_URL
-      - Port for http server, maybe
-   - add customizable agentfilestorage and tokenstorage using AWS resources. Currently, these are hardcoded local file sources in the various cmd/.../main.go packages.
-      - implement `s3.go` in agentfilestorage (or something similar)
-      - implement `ssm.go` in tokenstorage (or something similar)
+X   - replace hardcoded envvar values with configurable values for, at least the following:
+X      - GOOGLE_CLIENT_ID
+X      - GOOGLE_CLIENT_SECRET
+X      - HEXAGON_URL
+X   - add customizable agentfilestorage and tokenstorage using AWS resources. Currently, these are hardcoded local file sources in the various cmd/.../main.go packages.
+X      - implement `s3.go` in agentfilestorage (or somethingsimilar)
+X      - implement `ssm.go` in tokenstorage (or something similar)
    - add 2nd LLM step for verification
    - Sentry integration
  - General items

@@ -18,13 +18,15 @@ type Anthropic struct {
 	bedrockClient  *Bedrock
 	toolSessionMap map[string]*mcpsdk.ClientSession // tool name: session
 	user           *user.User
+	modelID        string
 }
 
-func NewAnthropic(bedrockClient *Bedrock, user *user.User) *Anthropic {
+func NewAnthropic(bedrockClient *Bedrock, user *user.User, modelID string) *Anthropic {
 	return &Anthropic{
 		bedrockClient:  bedrockClient,
 		toolSessionMap: make(map[string]*mcpsdk.ClientSession),
 		user:           user,
+		modelID:        modelID,
 	}
 }
 
@@ -62,7 +64,7 @@ func (a *Anthropic) Run(ctx context.Context, messages []anthropic.MessageParam) 
 
 	for {
 		resp, err := client.Messages.New(ctx, anthropic.MessageNewParams{
-			Model:     "us.anthropic.claude-opus-4-8", // include "us." to create inference profile instead of direct base model ID
+			Model:     a.modelID,
 			MaxTokens: 1024,
 			System:    system,
 			Messages:  messages,
@@ -111,7 +113,7 @@ func (a *Anthropic) mcpTools(ctx context.Context) ([]anthropic.ToolUnionParam, e
 			return nil, err
 		}
 		for _, t := range list.Tools {
-			fmt.Println("enabling internal tool", t.Name, t.Description)
+			fmt.Println("enabling tool", t.Name, t.Description)
 			schemaBytes, err := json.Marshal(t.InputSchema)
 			if err != nil {
 				return nil, fmt.Errorf("marshaling schema for tool %q: %w", t.Name, err)

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/stinkyfingers/go-email-agent/gmail"
@@ -12,18 +13,30 @@ import (
 func main() {
 	ctx := context.Background()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if err := godotenv.Load(); err != nil && !os.IsNotExist(err) {
+		log.Fatalf("error loading .env file: %v", err)
 	}
-
-	// TODO make storage configurable
-	localTokenStore := tokenstorage.NewLocalTokenStore()
-
-	gmailClient := gmail.NewGmail(localTokenStore)
-
-	err = gmailClient.RunOAuthServer(ctx)
+	// envvars
+	ssmPrefix := os.Getenv("SSM_PREFIX")
+	if ssmPrefix == "" {
+		log.Fatal("SSM_PREFIX is empty")
+	}
+	// storage type
+	var tokenStore tokenstorage.Storage
+	tokenStore, err := tokenstorage.NewSSMTokenStore(ctx, ssmPrefix)
 	if err != nil {
+		log.Fatal(err)
+	}
+	if os.Getenv("STORAGE") == "local" {
+		tokenStore = tokenstorage.NewLocalTokenStore()
+	}
+	// gmail client
+	gmailClient, err := gmail.NewGmail(tokenStore)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// run http server
+	if err := gmailClient.RunOAuthServer(ctx); err != nil {
 		log.Fatal(err)
 	}
 

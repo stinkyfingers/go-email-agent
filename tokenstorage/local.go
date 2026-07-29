@@ -9,6 +9,7 @@ import (
 
 var dir = "tokens"
 
+// SSMTokenStore implements Storage. Tokens are found in SSM Params at ./tokens/<email>
 type LocalTokenStore struct {
 }
 

@@ -7,10 +7,8 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-const hexagonUrl = "http://localhost:3001" // TODO - make configurable
-
 // HexagonMCPSession returns a session. It's a good idea to call session.Close() when complete.
-func HexagonMCPSession(ctx context.Context) (*mcp.ClientSession, error) {
+func HexagonMCPSession(ctx context.Context, hexagonUrl string) (*mcp.ClientSession, error) {
 	// The real MCP server is the Ruby/Rails app in ticketco-web, which mounts
 	// MCP::Server::Transports::StreamableHTTPTransport at "/mcp" (see
 	// ticketco-web/config/routes.rb).

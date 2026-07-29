@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 )
 
+// LocalAgentFileStore implements the Storage interface and expects data in S3 at ./agentfiles/<email>/AGENT.md
 type LocalAgentFileStore struct {
 }
 
@@ -14,8 +15,7 @@ func NewLocalAgentFileStorage() *LocalAgentFileStore {
 }
 
 var (
-	filename = "AGENT.md"
-	dir      = "agentfiles"
+	dir = "agentfiles"
 )
 
 func (l *LocalAgentFileStore) RetrieveFile(name string) (string, error) {
