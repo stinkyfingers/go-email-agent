@@ -58,25 +58,25 @@
 
  ## TODO
 
-X - in Hexagon codebase
-X   - finish Hexagon MCP tools - in Hexagon service, branch HEX-310-mcp-server - copy remaining DB tools from Connor's original project.
-X - in this codebase
-X   - infrastructure, managed by Terraform
-X      - Lambdas+API Gateway -or- ECS and EventBridge (or other cron-style task)
-X      - SSM Params for config values
-X      - S3 for per-user AGENT.md files
-X      - 2 tasks: gmail_login (http server), and check_gmail (cron task)
-X         - Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
-X   - replace hardcoded envvar values with configurable values for, at least the following:
-X      - GOOGLE_CLIENT_ID
-X      - GOOGLE_CLIENT_SECRET
-X      - HEXAGON_URL
-X   - add customizable agentfilestorage and tokenstorage using AWS resources. Currently, these are hardcoded local file sources in the various cmd/.../main.go packages.
-X      - implement `s3.go` in agentfilestorage (or somethingsimilar)
-X      - implement `ssm.go` in tokenstorage (or something similar)
+ - in Hexagon codebase
+   - [x] finish Hexagon MCP tools - in Hexagon service, branch HEX-310-mcp-server - copy remaining DB tools from Connor's original project.
+ - in this codebase
+   - [x] infrastructure, managed by Terraform
+      - [x] Lambdas+API Gateway -or- ECS and EventBridge (or other cron-style task)
+      - [x] SSM Params for config values
+      - [x] S3 for per-user AGENT.md files
+      - [x] 2 tasks: gmail_login (http server), and check_gmail (cron task)
+         - [x] Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
+   - [x] replace hardcoded envvar values with configurable values for, at least the following:
+      - [x] GOOGLE_CLIENT_ID
+      - [x] GOOGLE_CLIENT_SECRET
+      - [x] HEXAGON_URL
+   - [x]  add customizable agentfilestorage and tokenstorage using AWS resources. Currently, these are hardcoded local file sources in the various cmd/.../main.go packages.
+      - [x] implement `s3.go` in agentfilestorage (or somethingsimilar)
+      - [x] implement `ssm.go` in tokenstorage (or something similar)
    - add 2nd LLM step for verification
    - Sentry integration
-   - Confirm Terraform works and deploy
+   - <b>Confirm Terraform works</B> and deploy
  - General items
    - Hex API authentication for /mcp endpoint used by this rep
    - Set up "company" Google Cloud account and give team access.
