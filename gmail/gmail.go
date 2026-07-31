@@ -154,6 +154,36 @@ func (g *Gmail) GmailService(ctx context.Context, email string) (*gmail.Service,
 	return gmail.NewService(ctx, option.WithHTTPClient(httpClient))
 }
 
+// extractPlainTextBody finds the first inline text/plain part in a message,
+// recursing into nested multipart structures (e.g. multipart/mixed wrapping
+// a multipart/alternative) and falling back to the top-level payload itself
+// for single-part messages. Parts with a Filename are attachments, not the
+// message body, even if their MimeType happens to be text/plain.
+func extractPlainTextBody(part *gmail.MessagePart) string {
+	if part == nil {
+		return ""
+	}
+	if part.MimeType == "text/plain" && part.Filename == "" && part.Body != nil && part.Body.Data != "" {
+		// Gmail's docs call this "base64url encoded" but don't guarantee
+		// padding either way — it depends on the decoded byte length.
+		// RawURLEncoding rejects any "=" padding outright, so strip it
+		// first to handle both padded and unpadded data.
+		data := strings.TrimRight(part.Body.Data, "=")
+		decoded, err := base64.RawURLEncoding.DecodeString(data)
+		if err != nil {
+			log.Printf("unable to decode text/plain body part: %v", err)
+			return ""
+		}
+		return string(decoded)
+	}
+	for _, sub := range part.Parts {
+		if body := extractPlainTextBody(sub); body != "" {
+			return body
+		}
+	}
+	return ""
+}
+
 func CheckGmail(ctx context.Context, tokenStorage tokenstorage.Storage, email string) ([]EmailSummary, error) {
 	g, err := NewGmail(tokenStorage)
 	if err != nil {
@@ -194,14 +224,7 @@ func CheckGmail(ctx context.Context, tokenStorage tokenstorage.Storage, email st
 				summary.From = header.Value
 			}
 		}
-		for _, part := range msg.Payload.Parts {
-			switch part.MimeType {
-			case "text/plain":
-				summary.Body += part.Body.Data
-			default:
-				continue
-			}
-		}
+		summary.Body = extractPlainTextBody(msg.Payload)
 
 		emails = append(emails, summary)
 	}

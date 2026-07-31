@@ -86,6 +86,7 @@ func main() {
 	// run email agent for each user. Tally errors and log.
 	var userErrors []string
 	for _, user := range users {
+		fmt.Println("running email agent for user", user.Email)
 		// MCP servers
 		mcpServer := mcp.NewMcpServer(user)
 		mcpSession, err := mcpServer.Connect(ctx)
@@ -104,4 +105,5 @@ func main() {
 	if len(userErrors) > 0 {
 		log.Println("email agent errors: ", strings.Join(userErrors, "\n"))
 	}
+	fmt.Println("email agent run complete")
 }

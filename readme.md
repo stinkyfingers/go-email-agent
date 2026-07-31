@@ -7,8 +7,6 @@
  - `/login` - for human users to login to gmail
  - `/callback` - for Google's OAuth flow
 
- `cmd/check_gmail/main.go` - for testing only - a single gmail run against the hardcoded email address.
-
 
  ## Run Locally
 
@@ -21,6 +19,29 @@
 - visit localhost:8080/login and authorize a gmail address
   - note: the address must be added to "allowed emails," which is currently in my personal Google Cloud account
 `go run cmd/check_emails/main.go`
+
+
+## Deploy
+
+#### Bootstrap
+
+`cd terraform/bootstrap`
+`terraform init`
+`terraform apply`
+ - Do once only, ever. Creates the S3 bucket for terraform state.
+ *NOTE* `state-bucket-name` go-email-agent-terraform-state needs to be globally unique. If this was created in a test AWS account, it may need to be cleaned up before
+ deploying to a live AWS account.
+
+ #### Set Vars
+
+ Set values in tfvars.tf (copy template from tfvars.tf.example)
+
+ #### Deploy to AWS
+
+ `cd terraform`  # back in the main dir
+ `terraform init`  # picks up the S3 backend bootstrap just created, above
+ `terraform plan`
+ `terraform apply`
 
  ## Project
 
@@ -37,15 +58,15 @@
 
  ## TODO
 
- - in Hexagon codebase
-   - finish Hexagon MCP tools - in Hexagon service, branch HEX-310-mcp-server - copy remaining DB tools from Connor's original project.
- - in this codebase
-   - infrastructure, managed by Terraform
-      - Lambdas+API Gateway -or- ECS and EventBridge (or other cron-style task)
-      - SSM Params for config values
-      - S3 for per-user AGENT.md files
-      - 2 tasks: gmail_login (http server), and check_gmail (cron task)
-         - Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
+X - in Hexagon codebase
+X   - finish Hexagon MCP tools - in Hexagon service, branch HEX-310-mcp-server - copy remaining DB tools from Connor's original project.
+X - in this codebase
+X   - infrastructure, managed by Terraform
+X      - Lambdas+API Gateway -or- ECS and EventBridge (or other cron-style task)
+X      - SSM Params for config values
+X      - S3 for per-user AGENT.md files
+X      - 2 tasks: gmail_login (http server), and check_gmail (cron task)
+X         - Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
 X   - replace hardcoded envvar values with configurable values for, at least the following:
 X      - GOOGLE_CLIENT_ID
 X      - GOOGLE_CLIENT_SECRET
@@ -55,8 +76,9 @@ X      - implement `s3.go` in agentfilestorage (or somethingsimilar)
 X      - implement `ssm.go` in tokenstorage (or something similar)
    - add 2nd LLM step for verification
    - Sentry integration
+   - Confirm Terraform works and deploy
  - General items
-   - Hex API authentication?
+   - Hex API authentication for /mcp endpoint used by this rep
    - Set up "company" Google Cloud account and give team access.
       - APIs & Services 
          - enable Gmail API

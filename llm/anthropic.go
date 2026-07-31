@@ -140,6 +140,7 @@ func (a *Anthropic) mcpTools(ctx context.Context) ([]anthropic.ToolUnionParam, e
 // server and returns the result text (and whether it was an error) for use
 // in a tool_result block.
 func (a *Anthropic) callMCPTool(ctx context.Context, toolUse anthropic.ToolUseBlock) (result string, isError bool) {
+	fmt.Println("calling mcp tool", toolUse.Name)
 	var args map[string]any
 	if err := json.Unmarshal(toolUse.Input, &args); err != nil {
 		return fmt.Sprintf("invalid tool input: %v", err), true
