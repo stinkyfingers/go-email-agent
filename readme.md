@@ -107,6 +107,11 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
 - user - package for user, essentially just an email & email type.
 
+- sample_data
+
+  - .env.sample - env file with private data omitted
+
+  - AGENT.sample.md - copy of Connor's original. I use a much simpler one for testing, instructing the LLM to essentially just respond to my test email
   
   
 
