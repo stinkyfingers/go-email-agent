@@ -11,6 +11,7 @@ import (
 	"github.com/anthropics/anthropic-sdk-go/bedrock"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/stinkyfingers/go-email-agent/notification"
 	"github.com/stinkyfingers/go-email-agent/user"
 )
 
@@ -92,7 +93,7 @@ func (a *Anthropic) Run(ctx context.Context, messages []anthropic.MessageParam) 
 		if resp.StopReason != anthropic.StopReasonToolUse {
 			if draftsCreated > 0 {
 				msg := fmt.Sprintf("📬 go-email-agent created %d draft(s). Check Gmail Drafts to review.", draftsCreated)
-				if err := notifySlack(ctx, msg); err != nil {
+				if err := notification.NotifySlack(ctx, msg); err != nil {
 					log.Printf("slack notification failed: %v", err)
 				}
 			}
@@ -140,7 +141,6 @@ func (a *Anthropic) mcpTools(ctx context.Context) ([]anthropic.ToolUnionParam, e
 // server and returns the result text (and whether it was an error) for use
 // in a tool_result block.
 func (a *Anthropic) callMCPTool(ctx context.Context, toolUse anthropic.ToolUseBlock) (result string, isError bool) {
-	fmt.Println("calling mcp tool", toolUse.Name)
 	var args map[string]any
 	if err := json.Unmarshal(toolUse.Input, &args); err != nil {
 		return fmt.Sprintf("invalid tool input: %v", err), true
