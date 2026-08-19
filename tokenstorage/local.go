@@ -52,3 +52,12 @@ func (l *LocalTokenStore) ListEmails() ([]string, error) {
 	}
 	return emails, nil
 }
+
+func (l *LocalTokenStore) RemoveToken(name string) error {
+	err := os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	path := filepath.Join(dir, name)
+	return os.Remove(path)
+}

@@ -76,6 +76,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+
 	// hex mcp server
 	hexagonMCPSession, err := mcp.HexagonMCPSession(ctx, hexagonUrl)
 	if err != nil {

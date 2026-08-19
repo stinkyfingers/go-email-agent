@@ -61,6 +61,7 @@ func NewGmail(tokenstorage tokenstorage.Storage) (*Gmail, error) {
 func (g *Gmail) RunOAuthServer(ctx context.Context) error {
 	http.HandleFunc("/login", g.handleLogin)
 	http.HandleFunc("/callback", g.handleCallback)
+	http.HandleFunc("/logout", g.handleLogout)
 
 	log.Println("Server started on :8080")
 	return http.ListenAndServe(":8080", nil)
@@ -139,6 +140,22 @@ func generateStateOauthCookie(w http.ResponseWriter) string {
 	}
 	http.SetCookie(w, cookie)
 	return state
+}
+
+// 3. Remove user from storage
+func (g *Gmail) handleLogout(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email")
+	if email == "" {
+		fmt.Fprintf(w, "query 'email' is required")
+		return
+	}
+	err := g.TokenStorage.RemoveToken(email)
+	if err != nil {
+		fmt.Fprintf(w, "Token removal failed: %s", err.Error())
+		return
+	}
+
+	fmt.Fprintf(w, "gmail token removed successfully")
 }
 
 /* Service for use by other packages */
