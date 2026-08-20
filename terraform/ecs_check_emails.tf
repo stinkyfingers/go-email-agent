@@ -41,6 +41,7 @@ resource "aws_ecs_task_definition" "check_emails" {
         { name = "AWS_REGION", value = var.aws_region },
         { name = "ANTHROPIC_MODEL_ID", value = var.anthropic_model_id },
         { name = "HEXAGON_URL", value = var.hexagon_url },
+        { name = "HEXAGON_BEARER_TOKEN", value = var.hexagon_bearer_token },
         { name = "GOOGLE_CLIENT_ID", value = var.google_client_id },
         { name = "GOOGLE_OAUTH_REDIRECT_URL", value = "https://${var.domain_name}/callback" },
         { name = "S3_BUCKET", value = var.s3_bucket_name },

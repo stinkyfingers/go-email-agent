@@ -40,6 +40,10 @@ func main() {
 	if hexagonUrl == "" {
 		log.Fatal("HEXAGON_URL is empty")
 	}
+	hexagonToken := os.Getenv("HEXAGON_BEARER_TOKEN")
+	if hexagonUrl == "" {
+		log.Fatal("HEXAGON_BEARER_TOKEN is empty")
+	}
 	anthropicModelID := os.Getenv("ANTHROPIC_MODEL_ID")
 	if anthropicModelID == "" {
 		log.Fatal("ANTHROPIC_MODEL_ID is empty")
@@ -76,27 +80,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-
-	// hex mcp server
-	hexagonMCPSession, err := mcp.HexagonMCPSession(ctx, hexagonUrl)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer hexagonMCPSession.Close()
-
 	// run email agent for each user. Tally errors and log.
 	var userErrors []string
 	for _, user := range users {
 		fmt.Println("running email agent for user", user.Email)
 		// MCP servers
-		mcpServer := mcp.NewMcpServer(user)
+		mcpServer := mcp.NewMcpServer(user, hexagonUrl, hexagonToken)
 		mcpSession, err := mcpServer.Connect(ctx)
 		if err != nil {
 			userErrors = append(userErrors, fmt.Sprintf("connect error for user %s: %v", user.Email, err))
 		}
 
 		// Run LLM
-		bedrock := llm.NewBedrock(awsRegion, mcpSession, hexagonMCPSession)
+		// bedrock := llm.NewBedrock(awsRegion, mcpSession, hexagonMCPSession)
+		bedrock := llm.NewBedrock(awsRegion, mcpSession)
 		anthropic := llm.NewAnthropic(bedrock, user, anthropicModelID)
 		if err := anthropic.Run(ctx, messages); err != nil {
 			userErrors = append(userErrors, fmt.Sprintf("anthropic error for user %s: %v", user.Email, err))

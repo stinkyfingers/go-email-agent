@@ -27,7 +27,7 @@ variable "anthropic_model_id" {
 
 variable "hexagon_url" {
   description = <<-EOT
-    URL of the Hexagon (ticketco-web) MCP server's /mcp endpoint. The
+    URL of the Hexagon (ticketco-web) API. The
     "http://localhost:3001" default only works for local dev — inside ECS
     there is no ticketco-web on localhost, so this MUST be overridden to
     wherever that app is actually reachable from this VPC before the
@@ -35,6 +35,11 @@ variable "hexagon_url" {
   EOT
   type        = string
   default     = "http://localhost:3001"
+}
+
+variable "hexagon_bearer_token" {
+  description = "auth token for hexagon API"
+  type = string 
 }
 
 variable "domain_name" {

@@ -15,12 +15,16 @@ import (
 */
 
 type McpServer struct {
-	User *user.User
+	User         *user.User
+	HexagonURL   string
+	HexagonToken string
 }
 
-func NewMcpServer(user *user.User) *McpServer {
+func NewMcpServer(user *user.User, hexagonURL, hexagonToken string) *McpServer {
 	return &McpServer{
-		User: user,
+		User:         user,
+		HexagonURL:   hexagonURL,
+		HexagonToken: hexagonToken,
 	}
 }
 
@@ -60,6 +64,12 @@ func (m *McpServer) newServer() *mcp.Server {
 	mcp.AddTool(server, &mcp.Tool{Name: "greet", Description: "say hi"}, m.SayHi)
 	mcp.AddTool(server, &mcp.Tool{Name: "check_email", Description: "list unread emails in the inbox"}, m.CheckEmail)
 	mcp.AddTool(server, &mcp.Tool{Name: "draft_email", Description: "create a Gmail draft replying to a specific unread email"}, m.DraftEmail)
+	mcp.AddTool(server, &mcp.Tool{Name: "get_orders", Description: "list orders"}, m.GetOrders)
+	mcp.AddTool(server, &mcp.Tool{Name: "get_order", Description: "get a specific order by external_order_id"}, m.GetOrder)
+	mcp.AddTool(server, &mcp.Tool{Name: "get_failed_orders", Description: "list failed orders"}, m.GetFailedOrders)
+	mcp.AddTool(server, &mcp.Tool{Name: "get_order_barcodes", Description: "get order barcodes by external_order_id"}, m.GetOrderBarcodes)
+	mcp.AddTool(server, &mcp.Tool{Name: "get_order_event", Description: "get order event by external_order_id"}, m.GetOrderEvent)
+	mcp.AddTool(server, &mcp.Tool{Name: "get_order_double_sale_check", Description: "check for double sales of an order by external_order_id"}, m.GetOrderDoubleSaleCheck)
 
 	return server
 }
