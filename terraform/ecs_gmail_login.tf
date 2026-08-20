@@ -45,7 +45,6 @@ resource "aws_ecs_task_definition" "gmail_login" {
         { name = "GOOGLE_CLIENT_ID", value = var.google_client_id },
         { name = "AWS_REGION", value = var.aws_region },
         { name = "ANTHROPIC_MODEL_ID", value = var.anthropic_model_id },
-        { name = "HEXAGON_URL", value = var.hexagon_url },
         { name = "GOOGLE_OAUTH_REDIRECT_URL", value = "https://${var.domain_name}/callback" },
         { name = "S3_BUCKET", value = var.s3_bucket_name },
         { name = "SSM_PREFIX", value = var.ssm_prefix },

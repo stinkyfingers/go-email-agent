@@ -31,6 +31,7 @@ data "aws_iam_policy_document" "execution_secrets" {
     resources = compact([
       aws_ssm_parameter.google_client_secret.arn,
       try(aws_ssm_parameter.slack_webhook[0].arn, ""),
+      aws_ssm_parameter.hexagon_bearer_token.arn,
     ])
   }
 }

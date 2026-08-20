@@ -1,17 +1,17 @@
 ## Commands
 
-  
-  
 
 `cmd/check_emails/main.go` - gets emails from stored tokens. Iterates over them and uses Bedrock, with internal and external tools, to draft responses to emails that match criteria
 
-  
+
 
 `cmd/gmail_login/main.go` - runs an http server on port 8080 with endpoints:
 
 -  `/login` - for human users to login to gmail
 
 -  `/callback` - for Google's OAuth flow
+
+- `/logout` - for human users to logout and no longer get email replies auto-drafted
 
   
   
@@ -20,7 +20,7 @@
 
   
 
-- assure you have an .env file with SLACK_WEBHOOK, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+- assure you have an .env file with SLACK_WEBHOOK, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, HEXAGON_URL, and HEXAGON_BEARER_TOKEN. Set STORAGE=local
 
 - you'll need a slack app with a webhook
 
@@ -67,7 +67,7 @@ deploying to a live AWS account.
 
   
 
-Set values in tfvars.tf (copy template from tfvars.tf.example)
+Set values in terraform.tfvars (copy template from terraform.tfvars.example)
 
   
 
@@ -99,7 +99,7 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
 - llm - package for LLMs
 
-- mcp - package for internal MCP server and tools. The tools are all email-related.
+- tools - package for llm tools for email and hexagon API access.
 
 - tokens - this is the local directory for email OAuth tokens per email. Only used for local testing.
 
@@ -133,7 +133,7 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
     - [x] S3 for per-user AGENT.md files
 
-  - [x] 2 tasks: gmail_login (http server), and check_gmail (cron task)
+  - [x] 2 tasks: gmail_login (http server), and check_emails (cron task)
 
   - [x] Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
 
@@ -159,7 +159,7 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
 - General items
 
-  - [ ] Hex API authentication for /mcp endpoint used by this rep
+  - [x] Hex API authentication for API endpoints used by this rep
 
   - [ ] Set up "company" Google Cloud account and give team access.
 

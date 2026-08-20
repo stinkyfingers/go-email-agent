@@ -93,3 +93,13 @@ func (s *SSMTokenStore) ListEmails() ([]string, error) {
 	}
 	return emails, nil
 }
+
+func (s *SSMTokenStore) RemoveToken(name string) error {
+	_, err := s.client.DeleteParameter(context.Background(), &ssm.DeleteParameterInput{
+		Name: aws.String(s.paramName(name)),
+	})
+	if err != nil {
+		return fmt.Errorf("deleting ssm parameter for %s: %w", name, err)
+	}
+	return nil
+}

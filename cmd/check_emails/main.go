@@ -7,23 +7,18 @@ import (
 	"os"
 	"strings"
 
-	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/joho/godotenv"
 	"github.com/stinkyfingers/go-email-agent/agentfilestorage"
 	"github.com/stinkyfingers/go-email-agent/llm"
-	"github.com/stinkyfingers/go-email-agent/mcp"
 	"github.com/stinkyfingers/go-email-agent/tokenstorage"
+	"github.com/stinkyfingers/go-email-agent/tools"
 	"github.com/stinkyfingers/go-email-agent/user"
 )
 
-var messages = []anthropic.MessageParam{
-	anthropic.NewUserMessage(anthropic.NewTextBlock(
-		"Check my unread inbox. For every unread email that meets the criteria in your " +
-			"instructions, draft a reply per those instructions. Skip anything that doesn't " +
-			"meet the criteria — don't draft a reply for it. When you're done, summarize what " +
-			"you drafted and what you skipped, and why.",
-	)),
-}
+var initialMessage = "Check my unread inbox. For every unread email that meets the criteria in your " +
+	"instructions, draft a reply per those instructions. Skip anything that doesn't " +
+	"meet the criteria — don't draft a reply for it. When you're done, summarize what " +
+	"you drafted and what you skipped, and why."
 
 func main() {
 	ctx := context.Background()
@@ -39,6 +34,10 @@ func main() {
 	hexagonUrl := os.Getenv("HEXAGON_URL")
 	if hexagonUrl == "" {
 		log.Fatal("HEXAGON_URL is empty")
+	}
+	hexagonToken := os.Getenv("HEXAGON_BEARER_TOKEN")
+	if hexagonToken == "" {
+		log.Fatal("HEXAGON_BEARER_TOKEN is empty")
 	}
 	anthropicModelID := os.Getenv("ANTHROPIC_MODEL_ID")
 	if anthropicModelID == "" {
@@ -76,28 +75,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// hex mcp server
-	hexagonMCPSession, err := mcp.HexagonMCPSession(ctx, hexagonUrl)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer hexagonMCPSession.Close()
-
 	// run email agent for each user. Tally errors and log.
 	var userErrors []string
 	for _, user := range users {
 		fmt.Println("running email agent for user", user.Email)
-		// MCP servers
-		mcpServer := mcp.NewMcpServer(user)
-		mcpSession, err := mcpServer.Connect(ctx)
-		if err != nil {
-			userErrors = append(userErrors, fmt.Sprintf("connect error for user %s: %v", user.Email, err))
-		}
-
-		// Run LLM
-		bedrock := llm.NewBedrock(awsRegion, mcpSession, hexagonMCPSession)
-		anthropic := llm.NewAnthropic(bedrock, user, anthropicModelID)
-		if err := anthropic.Run(ctx, messages); err != nil {
+		toolHandler := tools.NewToolHandler(user, hexagonUrl, hexagonToken)
+		anthropic := llm.NewAnthropic(user, anthropicModelID, awsRegion, toolHandler)
+		if err := anthropic.Run(ctx, initialMessage); err != nil {
 			userErrors = append(userErrors, fmt.Sprintf("anthropic error for user %s: %v", user.Email, err))
 		}
 	}

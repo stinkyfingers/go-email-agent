@@ -18,7 +18,8 @@ locals {
   # not have been created.
   check_emails_secrets = concat(
     [{ name = "GOOGLE_CLIENT_SECRET", valueFrom = aws_ssm_parameter.google_client_secret.arn }],
-    length(aws_ssm_parameter.slack_webhook) > 0 ? [{ name = "SLACK_WEBHOOK", valueFrom = aws_ssm_parameter.slack_webhook[0].arn }] : []
+    length(aws_ssm_parameter.slack_webhook) > 0 ? [{ name = "SLACK_WEBHOOK", valueFrom = aws_ssm_parameter.slack_webhook[0].arn }] : [],
+    [{ name = "HEXAGON_BEARER_TOKEN", valueFrom = aws_ssm_parameter.hexagon_bearer_token.arn}]
   )
 }
 

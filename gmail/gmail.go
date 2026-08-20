@@ -61,6 +61,7 @@ func NewGmail(tokenstorage tokenstorage.Storage) (*Gmail, error) {
 func (g *Gmail) RunOAuthServer(ctx context.Context) error {
 	http.HandleFunc("/login", g.handleLogin)
 	http.HandleFunc("/callback", g.handleCallback)
+	http.HandleFunc("/logout", g.handleLogout)
 
 	log.Println("Server started on :8080")
 	return http.ListenAndServe(":8080", nil)
@@ -68,9 +69,9 @@ func (g *Gmail) RunOAuthServer(ctx context.Context) error {
 
 /* handlers */
 
-// 1. Redirect user to Google Auth URL
+// handleLogin redirects user to Google Auth URL, with login value
 func (g *Gmail) handleLogin(w http.ResponseWriter, r *http.Request) {
-	state := generateStateOauthCookie(w)
+	state := generateStateOauthCookie(w, "login")
 
 	// AccessTypeOffline forces Google to return a Refresh Token
 	// ApprovalForce ensures the prompt shows up if testing repeatedly
@@ -78,7 +79,14 @@ func (g *Gmail) handleLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-// 2. Receive Auth Code and Exchange for Tokens
+// handleLogout handleLogout redirects user to Google Auth URL, with logout value
+func (g *Gmail) handleLogout(w http.ResponseWriter, r *http.Request) {
+	state := generateStateOauthCookie(w, "logout")
+	url := g.OAuthConfig.AuthCodeURL(state, oauth2.AccessTypeOffline, oauth2.ApprovalForce)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+}
+
+// handleCallback will receive Auth Code and Exchange for Tokens
 func (g *Gmail) handleCallback(w http.ResponseWriter, r *http.Request) {
 	// Validate state cookie against CSRF
 	oauthState, err := r.Cookie("oauthstate")
@@ -116,19 +124,32 @@ func (g *Gmail) handleCallback(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "email not found in jw4t %T", jwtToken.Claims)
 		return
 	}
-	err = g.TokenStorage.StoreToken(email, token)
-	if err != nil {
-		fmt.Fprintf(w, "Token storage failed: %s", err.Error())
+	switch getIntentFromCookie(oauthState) {
+	case "logout":
+		err := g.TokenStorage.RemoveToken(email)
+		if err != nil {
+			fmt.Fprintf(w, "Token removal failed: %s", err.Error())
+			return
+		}
+		fmt.Fprintf(w, "gmail token removed successfully")
+		return
+	case "login":
+		err = g.TokenStorage.StoreToken(email, token)
+		if err != nil {
+			fmt.Fprintf(w, "Token storage failed: %s", err.Error())
+			return
+		}
+
+		fmt.Fprintf(w, "gmail token stored successfully")
 		return
 	}
-
-	fmt.Fprintf(w, "gmail token stored successfully")
+	fmt.Fprintf(w, "unknown state on oauth cookie")
 }
 
-func generateStateOauthCookie(w http.ResponseWriter) string {
+func generateStateOauthCookie(w http.ResponseWriter, intent string) string {
 	b := make([]byte, 16)
 	rand.Read(b)
-	state := base64.URLEncoding.EncodeToString(b)
+	state := fmt.Sprintf("%s:%s", intent, base64.URLEncoding.EncodeToString(b))
 
 	cookie := &http.Cookie{
 		Name:     "oauthstate",
@@ -139,6 +160,11 @@ func generateStateOauthCookie(w http.ResponseWriter) string {
 	}
 	http.SetCookie(w, cookie)
 	return state
+}
+
+func getIntentFromCookie(oauthState *http.Cookie) string {
+	intent, _, _ := strings.Cut(oauthState.Value, ":")
+	return intent
 }
 
 /* Service for use by other packages */

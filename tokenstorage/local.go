@@ -9,7 +9,7 @@ import (
 
 var dir = "tokens"
 
-// SSMTokenStore implements Storage. Tokens are found in SSM Params at ./tokens/<email>
+// LocalTokenStore implements Storage. Tokens are found at ./tokens/<email>
 type LocalTokenStore struct {
 }
 
@@ -51,4 +51,13 @@ func (l *LocalTokenStore) ListEmails() ([]string, error) {
 		emails = append(emails, entry.Name())
 	}
 	return emails, nil
+}
+
+func (l *LocalTokenStore) RemoveToken(name string) error {
+	err := os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	path := filepath.Join(dir, name)
+	return os.Remove(path)
 }
