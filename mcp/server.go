@@ -11,7 +11,7 @@ import (
 )
 
 /*
-	Runs an "internal" MCP server to offer email tools
+	Runs an "internal" MCP server to offer tools
 */
 
 type McpServer struct {

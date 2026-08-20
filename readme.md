@@ -99,7 +99,7 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
 - llm - package for LLMs
 
-- mcp - package for internal MCP server and tools. The tools are all email-related.
+- mcp - package for internal MCP server and tools. The tools include email and hexagon API access.
 
 - tokens - this is the local directory for email OAuth tokens per email. Only used for local testing.
 
