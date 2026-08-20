@@ -19,3 +19,10 @@ resource "aws_ssm_parameter" "slack_webhook" {
   type  = "SecureString"
   value = var.slack_webhook
 }
+
+
+resource "aws_ssm_parameter" "hexagon_bearer_token" {
+  name = "/${var.app_name}/hexagon_bearer_token"
+  type = "SecureString"
+  value = var.hexagon_bearer_token
+}

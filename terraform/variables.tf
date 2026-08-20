@@ -39,7 +39,8 @@ variable "hexagon_url" {
 
 variable "hexagon_bearer_token" {
   description = "auth token for hexagon API"
-  type = string 
+  type        = string 
+  sensitive   = true
 }
 
 variable "domain_name" {

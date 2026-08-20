@@ -5,13 +5,11 @@ import (
 )
 
 type Bedrock struct {
-	Region      string
-	MCPSessions []*mcpsdk.ClientSession
+	Region string
 }
 
-func NewBedrock(region string, mcpSessions ...*mcpsdk.ClientSession) *Bedrock {
+func NewBedrock(region string, mcpSession *mcpsdk.ClientSession) *Bedrock {
 	return &Bedrock{
-		Region:      region,
-		MCPSessions: mcpSessions,
+		Region: region,
 	}
 }

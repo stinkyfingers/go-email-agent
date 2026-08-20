@@ -67,7 +67,7 @@ deploying to a live AWS account.
 
   
 
-Set values in tfvars.tf (copy template from tfvars.tf.example)
+Set values in terraform.tfvars (copy template from tfvars.tf.example)
 
   
 
@@ -133,7 +133,7 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
     - [x] S3 for per-user AGENT.md files
 
-  - [x] 2 tasks: gmail_login (http server), and check_gmail (cron task)
+  - [x] 2 tasks: gmail_login (http server), and check_email (cron task)
 
   - [x] Determine best way to run 2 services (http server and cronjob): Procfile, multi-stage docker build, etc.
 
@@ -159,7 +159,7 @@ Set values in tfvars.tf (copy template from tfvars.tf.example)
 
 - General items
 
-  - [ ] Hex API authentication for /mcp endpoint used by this rep
+  - [x] Hex API authentication for API endpoints used by this rep
 
   - [ ] Set up "company" Google Cloud account and give team access.
 
