@@ -18,6 +18,6 @@ func NewToolHandler(user *user.User, hexagonURL, hexagonToken string) *ToolHandl
 		User:               user,
 		HexagonURL:         hexagonURL,
 		HexagonToken:       hexagonToken,
-		EmailDraftsCreated: atomic.Int32{},
+		EmailDraftsCreated: atomic.Int32{}, // explicitly init to zero
 	}
 }

@@ -8,14 +8,12 @@ import (
 	"github.com/anthropics/anthropic-sdk-go"
 	"github.com/anthropics/anthropic-sdk-go/bedrock"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
-	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/stinkyfingers/go-email-agent/notification"
 	"github.com/stinkyfingers/go-email-agent/tools"
 	"github.com/stinkyfingers/go-email-agent/user"
 )
 
 type Anthropic struct {
-	session     *mcpsdk.ClientSession
 	user        *user.User
 	modelID     string
 	region      string

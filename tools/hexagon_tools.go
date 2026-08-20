@@ -2,7 +2,6 @@ package tools
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -15,10 +14,6 @@ type OrderInput struct {
 	ExternalOrderID string `json:"external_order_id"`
 }
 
-type HexagonOutput struct {
-	Data any
-}
-
 func (t *ToolHandler) GetOrdersTool() (anthropic.BetaTool, error) {
 	return toolrunner.NewBetaToolFromJSONSchema(
 		"get_orders",
@@ -28,14 +23,10 @@ func (t *ToolHandler) GetOrdersTool() (anthropic.BetaTool, error) {
 			if err != nil {
 				return anthropic.BetaToolResultBlockParamContentUnion{}, err
 			}
-			b, err := json.Marshal(data)
-			if err != nil {
-				return anthropic.BetaToolResultBlockParamContentUnion{}, err
-			}
 
 			return anthropic.BetaToolResultBlockParamContentUnion{
 				OfText: &anthropic.BetaTextBlockParam{
-					Text: string(b),
+					Text: data,
 				},
 			}, nil
 		},
@@ -51,14 +42,10 @@ func (t *ToolHandler) GetOrderTool() (anthropic.BetaTool, error) {
 			if err != nil {
 				return anthropic.BetaToolResultBlockParamContentUnion{}, err
 			}
-			b, err := json.Marshal(data)
-			if err != nil {
-				return anthropic.BetaToolResultBlockParamContentUnion{}, err
-			}
 
 			return anthropic.BetaToolResultBlockParamContentUnion{
 				OfText: &anthropic.BetaTextBlockParam{
-					Text: string(b),
+					Text: data,
 				},
 			}, nil
 		},
@@ -74,14 +61,10 @@ func (t *ToolHandler) GetFailedOrdersTool() (anthropic.BetaTool, error) {
 			if err != nil {
 				return anthropic.BetaToolResultBlockParamContentUnion{}, err
 			}
-			b, err := json.Marshal(data)
-			if err != nil {
-				return anthropic.BetaToolResultBlockParamContentUnion{}, err
-			}
 
 			return anthropic.BetaToolResultBlockParamContentUnion{
 				OfText: &anthropic.BetaTextBlockParam{
-					Text: string(b),
+					Text: data,
 				},
 			}, nil
 		},
@@ -97,14 +80,10 @@ func (t *ToolHandler) GetOrderBarcodesTool() (anthropic.BetaTool, error) {
 			if err != nil {
 				return anthropic.BetaToolResultBlockParamContentUnion{}, err
 			}
-			b, err := json.Marshal(data)
-			if err != nil {
-				return anthropic.BetaToolResultBlockParamContentUnion{}, err
-			}
 
 			return anthropic.BetaToolResultBlockParamContentUnion{
 				OfText: &anthropic.BetaTextBlockParam{
-					Text: string(b),
+					Text: data,
 				},
 			}, nil
 		},
@@ -120,14 +99,9 @@ func (t *ToolHandler) GetOrderEventTool() (anthropic.BetaTool, error) {
 			if err != nil {
 				return anthropic.BetaToolResultBlockParamContentUnion{}, err
 			}
-			b, err := json.Marshal(data)
-			if err != nil {
-				return anthropic.BetaToolResultBlockParamContentUnion{}, err
-			}
-
 			return anthropic.BetaToolResultBlockParamContentUnion{
 				OfText: &anthropic.BetaTextBlockParam{
-					Text: string(b),
+					Text: data,
 				},
 			}, nil
 		},
@@ -143,14 +117,10 @@ func (t *ToolHandler) GetOrderDoubleSaleCheckTool() (anthropic.BetaTool, error) 
 			if err != nil {
 				return anthropic.BetaToolResultBlockParamContentUnion{}, err
 			}
-			b, err := json.Marshal(data)
-			if err != nil {
-				return anthropic.BetaToolResultBlockParamContentUnion{}, err
-			}
 
 			return anthropic.BetaToolResultBlockParamContentUnion{
 				OfText: &anthropic.BetaTextBlockParam{
-					Text: string(b),
+					Text: data,
 				},
 			}, nil
 		},

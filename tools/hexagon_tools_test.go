@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 
 	"github.com/anthropics/anthropic-sdk-go"
@@ -100,7 +99,7 @@ func TestHexagonTools(t *testing.T) {
 }
 
 func TestHexagonLive(t *testing.T) {
-	t.Skip("un-skip to use for testing against local hexagon API during development")
+	// t.Skip("un-skip to use for testing against local hexagon API during development")
 
 	th := &ToolHandler{
 		HexagonURL:   "http://localhost:3001/api/agent/v1",
@@ -175,11 +174,7 @@ func TestHexagonLive(t *testing.T) {
 			if len(results) != 1 || results[0].OfText == nil {
 				t.Fatalf("%s: expected exactly one text result, got %+v", tt.description, results)
 			}
-			rawjson, err := strconv.Unquote(results[0].OfText.Text)
-			if err != nil {
-				t.Fatalf("error unquoting json %v", err)
-			}
-			if rawjson != tt.expectedOutput {
+			if results[0].OfText.Text != tt.expectedOutput {
 				t.Fatalf("got %s, expected %s", results[0].OfText.Text, tt.expectedOutput)
 			}
 		})
