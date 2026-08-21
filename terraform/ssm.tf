@@ -22,7 +22,7 @@ resource "aws_ssm_parameter" "slack_webhook" {
 
 
 resource "aws_ssm_parameter" "hexagon_bearer_token" {
-  name = "/${var.app_name}/hexagon_bearer_token"
-  type = "SecureString"
+  name  = "/${var.app_name}/hexagon_bearer_token"
+  type  = "SecureString"
   value = var.hexagon_bearer_token
 }
