@@ -10,4 +10,4 @@ google_client_secret = "REPLACE_ME"
 slack_webhook         = ""              # optional — leave "" to disable Slack notifications
 
 # Only override these if you're not going with the defaults in variables.tf:
-# hexagon_url = "REPLACE_ME"            # localhost default will NOT work once deployed — see variables.tf
+hexagon_url = "REPLACE_ME"            # localhost default will NOT work once deployed — see variables.tf

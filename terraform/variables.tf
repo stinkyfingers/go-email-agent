@@ -11,6 +11,7 @@ variable "app_name" {
 variable "image_tag" {
   description = "Tag of the image in the ECR repo to deploy (e.g. a git SHA). No default on purpose — every deploy should pick one explicitly."
   type        = string
+  default     = "main"
 }
 
 # --- Plain (non-secret) app config, injected as container env vars ---
@@ -98,4 +99,11 @@ variable "slack_webhook" {
   type        = string
   sensitive   = true
   default     = ""
+}
+
+variable "hexagon_bearer_token" {
+  description = "The Bearer token used for authentication of Hexagon API endpoints"
+  type        = string
+  sensitive   = true
+  default     = "abcdef"
 }
