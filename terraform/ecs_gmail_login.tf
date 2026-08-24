@@ -1,6 +1,6 @@
 resource "aws_security_group" "gmail_login_task" {
   name        = "${var.app_name}-gmail-login-task"
-  description = "gmail_login ECS task — inbound only from the ALB"
+  description = "gmail_login ECS task - inbound only from the ALB"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {

@@ -42,8 +42,9 @@ resource "aws_iam_role_policy" "execution_secrets" {
   policy = data.aws_iam_policy_document.execution_secrets.json
 }
 
-# --- gmail_login task role: only ever writes tokens (OAuth callback), never
-# reads them or touches S3/Bedrock/Hexagon — kept minimal. ---
+# --- gmail_login task role: only ever creates/removes tokens (OAuth
+# callback and logout), never reads them or touches S3/Bedrock/Hexagon —
+# kept minimal. ---
 
 resource "aws_iam_role" "gmail_login_task" {
   name               = "${var.app_name}-gmail-login-task"
@@ -52,7 +53,10 @@ resource "aws_iam_role" "gmail_login_task" {
 
 data "aws_iam_policy_document" "gmail_login_task" {
   statement {
-    actions   = ["ssm:PutParameter"]
+    actions = [
+      "ssm:PutParameter",
+      "ssm:DeleteParameter",
+    ]
     resources = ["arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter${var.ssm_prefix}/*"]
   }
 }

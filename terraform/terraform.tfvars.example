@@ -5,6 +5,7 @@
 image_tag       = "REPLACE_ME"          # e.g. a git SHA, set per deploy
 domain_name     = "REPLACE_ME"          # e.g. gmail-auth.example.com — required, see variables.tf
 route53_zone_id = ""                    # set if domain_name's DNS is in this account's Route 53
+vpc_id          = "REPLACE_ME"          # existing VPC to deploy into — this account has no default VPC
 
 google_client_secret = "REPLACE_ME"
 slack_webhook         = ""              # optional — leave "" to disable Slack notifications

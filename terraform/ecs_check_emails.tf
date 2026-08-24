@@ -1,6 +1,6 @@
 resource "aws_security_group" "check_emails_task" {
   name        = "${var.app_name}-check-emails-task"
-  description = "check_emails ECS task — outbound only, never receives inbound traffic"
+  description = "check_emails ECS task - outbound only, never receives inbound traffic"
   vpc_id      = data.aws_vpc.default.id
 
   egress {

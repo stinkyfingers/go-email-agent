@@ -1,6 +1,6 @@
 resource "aws_security_group" "alb" {
   name        = "${var.app_name}-alb"
-  description = "gmail_login ALB — public HTTP/HTTPS in, forwards to the ECS task"
+  description = "gmail_login ALB - public HTTP/HTTPS in, forwards to the ECS task"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {

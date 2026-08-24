@@ -77,7 +77,7 @@ Set values in terraform.tfvars (copy template from terraform.tfvars.example)
 
 `cd terraform` # back in the main dir
 
-`terraform init` # picks up the S3 backend bootstrap just created, above
+`terraform init -backend-config="backend.<ENV>>.hcl"` # picks up the S3 backend bootstrap just created, above
 
 `terraform plan`
 

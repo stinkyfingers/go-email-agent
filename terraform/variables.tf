@@ -8,6 +8,11 @@ variable "app_name" {
   default = "go-email-agent"
 }
 
+variable "vpc_id" {
+  description = "Existing VPC to deploy the ALB and ECS tasks into. No default on purpose — this account has no default VPC, so a real ID must be supplied."
+  type        = string
+}
+
 variable "image_tag" {
   description = "Tag of the image in the ECR repo to deploy (e.g. a git SHA). No default on purpose — every deploy should pick one explicitly."
   type        = string
@@ -99,11 +104,4 @@ variable "slack_webhook" {
   type        = string
   sensitive   = true
   default     = ""
-}
-
-variable "hexagon_bearer_token" {
-  description = "The Bearer token used for authentication of Hexagon API endpoints"
-  type        = string
-  sensitive   = true
-  default     = "abcdef"
 }

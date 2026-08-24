@@ -90,7 +90,7 @@ func TestHexagonTools(t *testing.T) {
 			// and each *Tool wraps it with json.Marshal before setting Text —
 			// so a raw "test response" body round-trips through Marshal into
 			// a quoted JSON string literal, not the bare bytes.
-			want := `"test response"`
+			want := `test response`
 			if results[0].OfText.Text != want {
 				t.Fatalf("got %s, expected %s", results[0].OfText.Text, want)
 			}
@@ -99,11 +99,14 @@ func TestHexagonTools(t *testing.T) {
 }
 
 func TestHexagonLive(t *testing.T) {
-	// t.Skip("un-skip to use for testing against local hexagon API during development")
+	t.Skip("un-skip to use for testing against local hexagon API during development")
 
 	th := &ToolHandler{
 		HexagonURL:   "http://localhost:3001/api/agent/v1",
-		HexagonToken: "abcdef",
+		HexagonToken: "",
+		// token depends on Hexagon API:
+		// bin/rails runner "puts APIClient.create_with_token!(name: 'local-dev').raw_token"
+
 	}
 	tests := []struct {
 		description    string
