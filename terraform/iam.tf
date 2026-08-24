@@ -81,7 +81,14 @@ data "aws_iam_policy_document" "check_emails_task" {
       "ssm:GetParameter",
       "ssm:GetParametersByPath",
     ]
-    resources = ["arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter${var.ssm_prefix}/*"]
+    # GetParametersByPath is checked against the exact path argument passed
+    # to the API (var.ssm_prefix itself, no trailing slash) — the "/*"
+    # wildcard only covers things nested under that path, not the bare
+    # prefix string, so both forms are needed here.
+    resources = [
+      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter${var.ssm_prefix}",
+      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter${var.ssm_prefix}/*",
+    ]
   }
 
   statement {
